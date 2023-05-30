@@ -1,1 +1,5 @@
+task 3.25.0
+
 terraform 1.0.2
+tflint 0.46.1
+tfsec 1.28.1
