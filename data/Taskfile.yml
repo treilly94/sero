@@ -1,0 +1,20 @@
+version: '3'
+
+tasks:
+  migrate:
+    cmds:
+      - npx prisma db push
+  build:
+    cmds:
+      - npm install
+      - npx prisma generate
+      - npx tsc
+  deploy:
+    - mkdir -p ./build/fetch
+    - mkdir -p ./build/ingest
+    - cp ./package.json ./build/fetch/package.json
+    - cp ./package.json ./build/ingest/package.json
+    - cp ./dist/fetchConsumptionDataFunction.js ./build/fetch/function.js
+    - cp ./dist/ingestConsumptionDataFunction.js ./build/ingest/function.js
+    - gcloud functions deploy fetchConsumptionData --region europe-west1 --runtime nodejs18 --trigger-http --allow-unauthenticated --source ./build/fetch
+    - gcloud functions deploy ingestConsumptionData --region europe-west1 --runtime nodejs18 --trigger-http --allow-unauthenticated --source ./build/ingest
